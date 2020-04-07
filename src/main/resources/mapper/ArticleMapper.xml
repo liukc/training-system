@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dgut.liukc.trainingsystem.dao.ArticleDao">
+
+    <resultMap id="articleMap" type="com.dgut.liukc.trainingsystem.javaBean.EmpJournal">
+        <id property="id" column="tb_emp_journal_id"/>
+        <result property="createTime" column="tb_emp_journal_create_time"/>
+        <result property="week" column="tb_emp_journal_week"/>
+        <result property="content" column="tb_emp_journal_content"/>
+        <result property="feedback" column="tb_emp_journal_feedback"/>
+        <result property="comment" column="tb_emp_journal_comment"/>
+        <result property="isEdit" column="tb_emp_journal_is_edit"/>
+        <result property="empId" column="tb_emp_id"/>
+    </resultMap>
+
+    <select id="isLogExist" resultType="integer">
+        select tb_emp_journal.tb_emp_journal_id from tb_emp_journal where tb_emp_journal_id = #{id}
+    </select>
+
+    <insert id="insertLog" parameterType="com.dgut.liukc.trainingsystem.javaBean.EmpJournal">
+        insert into tb_emp_journal(tb_emp_journal_create_time,tb_emp_journal_week, tb_emp_journal_content, tb_emp_journal_feedback, tb_emp_journal_comment, tb_emp_id)
+         values (#{log.createTime},#{log.week}, #{log.content},#{log.feedback},#{log.comment},#{log.empId})
+    </insert>
+
+    <update id="updateLog" parameterType="com.dgut.liukc.trainingsystem.javaBean.EmpJournal">
+        update tb_emp_journal set tb_emp_journal_content = #{log.content}, tb_emp_journal_feedback = #{log.feedback},tb_emp_journal_is_edit = #{log.isEdit} where tb_emp_journal_id = #{log.id}
+    </update>
+
+    <insert id="insertLogList" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_emp_journal(tb_emp_journal_create_time, tb_emp_journal_week, tb_emp_journal_content,
+        tb_emp_journal_feedback, tb_emp_journal_comment, tb_emp_id)
+        values
+        <foreach collection="logs" item="log" separator=",">
+            (#{log.createTime},#{log.week}, #{log.content},#{log.feedback},#{log.comment},#{log.empId})
+        </foreach>
+    </insert>
+
+    <select id="selectLogsByEmpId" resultMap="articleMap">
+        select tb_emp_journal_id, tb_emp_journal_create_time, tb_emp_journal_week,tb_emp_journal_is_edit from tb_emp_journal where tb_emp_id = #{empId} order by tb_emp_journal_create_time desc
+    </select>
+
+    <select id="selectLogById" resultMap="articleMap">
+        select * from tb_emp_journal where tb_emp_journal_id = #{id}
+    </select>
+
+    <delete id="deleteLogsByCreateTime">
+        DELETE FROM tb_emp_journal
+        <where>
+            <if test="endDate != null">
+                tb_emp_journal_create_time &gt; #{endDate}
+            </if>
+            <if test="beginDate != null">
+               and tb_emp_journal_create_time &lt; #{beginDate}
+            </if>
+            and tb_emp_id = #{empId}
+        </where>
+    </delete>
+</mapper>

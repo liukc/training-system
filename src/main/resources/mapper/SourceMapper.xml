@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dgut.liukc.trainingsystem.dao.SourceDao">
+    <resultMap id="sourceMap" type="com.dgut.liukc.trainingsystem.dao.SourceDao">
+        <id property="id" column="tb_source_id"/>
+        <result property="name" column="tb_source_name"/>
+        <result property="description" column="tb_source_description"/>
+        <result property="type" column="tb_source_type"/>
+        <result property="size" column="tb_source_size"/>
+        <result property="realPath" column="tb_source_real_path"/>
+        <result property="accessPath" column="tb_source_access_path"/>
+        <result property="md5" column="tb_source_md5"/>
+        <result property="hot" column="tb_source_hot"/>
+        <result property="empId" column="tb_emp_id"/>
+    </resultMap>
+
+    <select id="getSourceIdByMD5" resultType="Integer">
+        select tb_source.tb_source_id from tb_source where tb_source_md5 = #{md5}
+    </select>
+
+    <insert id="insertSource" parameterType="com.dgut.liukc.trainingsystem.javaBean.Source" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into tb_source(tb_source_name, tb_source_description, tb_source_type, tb_source_size, tb_source_real_path, tb_source_access_path, tb_source_md5, tb_source_hot, tb_emp_id) values (#{source.name},#{source.description},#{source.type},#{source.size}, #{source.realPath},#{source.accessPath},#{source.md5},#{source.hot},#{source.empId})
+    </insert>
+</mapper>

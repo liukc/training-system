@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dgut.liukc.trainingsystem.dao.AuthenticationDao">
+    <select id="emailIsExist" resultType="int">
+        select tb_emp_id from tb_emp_login_info where tb_emp_login_info_email = #{email}
+    </select>
+
+    <insert id="insertEmployee" parameterType="com.dgut.liukc.trainingsystem.javaBean.Employee" keyProperty="id"
+            useGeneratedKeys="true">
+        insert into tb_emp(tb_emp_id, tb_emp_name, tb_emp_headicon, tb_emp_description, tb_emp_type) values(#{employee.id}, #{employee.name}, #{employee.headIcon}, #{employee.description}, #{employee.type})
+    </insert>
+
+    <insert id="insertEmpLoginInfo" parameterType="com.dgut.liukc.trainingsystem.javaBean.EmpLoginInfo" keyProperty="id"
+            useGeneratedKeys="true">
+        insert into tb_emp_login_info(tb_emp_login_info_email, tb_emp_login_info_password, tb_emp_id)
+                values (#{empLoginInfo.email}, #{empLoginInfo.password}, #{empLoginInfo.empId})
+    </insert>
+
+    <select id="getPasswordByEmpId" resultType="String">
+        select tb_emp_login_info_password from tb_emp_login_info where tb_emp_id = #{id}
+    </select>
+
+    <select id="getDisableLevelByEmpId" resultType="int">
+        select tb_emp_login_info_disable from tb_emp_login_info where tb_emp_id = #{id}
+    </select>
+
+    <update id="disableAccountByEmpId" parameterType="Integer">
+        update tb_emp_login_info set tb_emp_login_info_disable = #{level} where tb_emp_id = #{id}
+    </update>
+
+    <update id="ableAccountByEmpId" parameterType="Integer">
+        update tb_emp_login_info set tb_emp_login_info_disable = 0 where tb_emp_id = #{id}
+    </update>
+    <resultMap id="employeeResultMap" type="com.dgut.liukc.trainingsystem.javaBean.Employee">
+        <id property="id" column="tb_emp_id"/>
+        <result property="name" column="tb_emp_name"/>
+        <result property="department" column="tb_emp_dept" />
+        <result property="headIcon" column="tb_emp_headicon"/>
+        <result property="type" column="tb_emp_type"/>
+        <result property="beginDate" column="tb_emp_begin_date" />
+        <result property="endDate" column="tb_emp_end_date" />
+        <result property="description" column="tb_emp_description"/>
+        <result property="teacherId" column="tb_emp_teacher"/>
+    </resultMap>
+
+    <select id="getEmployeeById" resultMap="employeeResultMap">
+        select * from tb_emp where tb_emp_id = #{id}
+    </select>
+</mapper>

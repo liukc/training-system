@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dgut.liukc.trainingsystem.dao.EmployeeDao">
+    <resultMap id="employeeResultMap" type="com.dgut.liukc.trainingsystem.javaBean.Employee">
+        <id property="id" column="tb_emp_id"/>
+        <result property="name" column="tb_emp_name"/>
+        <result property="department" column="tb_emp_dept" />
+        <result property="headIcon" column="tb_emp_headicon"/>
+        <result property="type" column="tb_emp_type"/>
+        <result property="beginDate" column="tb_emp_begin_date" />
+        <result property="endDate" column="tb_emp_end_date" />
+        <result property="description" column="tb_emp_description"/>
+        <result property="teacherId" column="tb_emp_teacher"/>
+    </resultMap>
+
+    <select id="getTeacherNameById" resultType="String">
+        select tb_emp_name from tb_emp where tb_emp_id = #{id}
+    </select>
+
+    <update id="updateTrainingPeriod">
+        update tb_emp set tb_emp_begin_date = #{beginDate}, tb_emp_end_date = #{endDate} where tb_emp_id = #{id}
+    </update>
+</mapper>
