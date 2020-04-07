@@ -22,6 +22,7 @@
 
     <insert id="insertSource" parameterType="com.dgut.liukc.trainingsystem.javaBean.Source" useGeneratedKeys="true"
             keyProperty="id">
-        insert into tb_source(tb_source_name, tb_source_description, tb_source_type, tb_source_size, tb_source_real_path, tb_source_access_path, tb_source_md5, tb_source_hot, tb_emp_id) values (#{source.name},#{source.description},#{source.type},#{source.size}, #{source.realPath},#{source.accessPath},#{source.md5},#{source.hot},#{source.empId})
+        insert into tb_source(tb_source_name, tb_source_description, tb_source_type, tb_source_size, tb_source_real_path, tb_source_access_path, tb_source_md5, tb_source_hot, tb_emp_id) values
+                            (#{source.name},#{source.description},#{source.type},#{source.size}, #{source.realPath},#{source.accessPath},#{source.md5},#{source.hot},#{source.empId})
     </insert>
 </mapper>

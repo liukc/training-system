@@ -39,7 +39,7 @@ public class SourceServiceImpl implements SourceService {
             if (!StringUtils.isEmpty(path)){
                 path = path.replace("\\", "/");
                 source = new Source();
-                source.setName(file.getName());
+                source.setName(file.getOriginalFilename());
                 source.setDescription(desc);
                 source.setRealPath(path);
                 source.setHot(0);
