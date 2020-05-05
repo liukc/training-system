@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dgut.liukc.trainingsystem.dao.ScoreDao">
+    <resultMap id="baseScore" type="com.dgut.liukc.trainingsystem.javaBean.Score">
+        <id property="id" column="tb_score_id"/>
+        <result property="rank" column="tb_score_rank"/>
+        <result property="number" column="tb_score_number"/>
+        <result property="empId" column="tb_emp_id"/>
+        <collection property="course" ofType="com.dgut.liukc.trainingsystem.javaBean.Course">
+            <id property="id" column="tb_course_id"/>
+            <result property="name" column="tb_course_name"/>
+            <collection property="exam" ofType="com.dgut.liukc.trainingsystem.javaBean.Exam">
+                <id property="id" column="tb_exam_id"/>
+            </collection>
+        </collection>
+    </resultMap>
+    <sql id="baseSelect">
+        tb_score_rank, tb_score_number, tb_emp_id, tb_course_id
+    </sql>
+    <insert id="insertScore" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_score(<include refid="baseSelect"></include>) values (#{score.rank}, #{score.number}, #{score.empId}, #{score.course.id})
+    </insert>
+</mapper>

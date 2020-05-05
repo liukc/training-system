@@ -20,7 +20,11 @@ public interface ArticleDao {
 
     List selectLogsByEmpId(@Param("empId") int empId);
 
+    List searchEditedLogsByEmpId(@Param("empId") int empId);
+
     EmpJournal selectLogById(@Param("id") int id);
 
     int deleteLogsByCreateTime(@Param("beginDate") Date beginDate, @Param("endDate") Date endDate, @Param("empId") int empId);
+
+    int insertLogComment(@Param("log")EmpJournal empJournal);
 }

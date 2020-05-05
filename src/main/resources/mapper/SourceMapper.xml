@@ -3,17 +3,20 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dgut.liukc.trainingsystem.dao.SourceDao">
-    <resultMap id="sourceMap" type="com.dgut.liukc.trainingsystem.dao.SourceDao">
+    <resultMap id="sourceMap" type="com.dgut.liukc.trainingsystem.javaBean.Source">
         <id property="id" column="tb_source_id"/>
         <result property="name" column="tb_source_name"/>
         <result property="description" column="tb_source_description"/>
+        <result property="coverImage" column="tb_source_cover_image"/>
         <result property="type" column="tb_source_type"/>
         <result property="size" column="tb_source_size"/>
         <result property="realPath" column="tb_source_real_path"/>
         <result property="accessPath" column="tb_source_access_path"/>
         <result property="md5" column="tb_source_md5"/>
         <result property="hot" column="tb_source_hot"/>
+        <result property="isPrivate" column="tb_source_is_private"/>
         <result property="empId" column="tb_emp_id"/>
+        <result property="empName" column="tb_emp_name"/>
     </resultMap>
 
     <select id="getSourceIdByMD5" resultType="Integer">
@@ -22,7 +25,25 @@
 
     <insert id="insertSource" parameterType="com.dgut.liukc.trainingsystem.javaBean.Source" useGeneratedKeys="true"
             keyProperty="id">
-        insert into tb_source(tb_source_name, tb_source_description, tb_source_type, tb_source_size, tb_source_real_path, tb_source_access_path, tb_source_md5, tb_source_hot, tb_emp_id) values
-                            (#{source.name},#{source.description},#{source.type},#{source.size}, #{source.realPath},#{source.accessPath},#{source.md5},#{source.hot},#{source.empId})
+        insert into tb_source(tb_source_name, tb_source_description, tb_source_cover_image, tb_source_type, tb_source_size, tb_source_real_path, tb_source_access_path, tb_source_md5, tb_source_hot, tb_emp_id) values
+                            (#{source.name},#{source.description},#{source.coverImage},#{source.type},#{source.size}, #{source.realPath},#{source.accessPath},#{source.md5},#{source.hot},#{source.empId})
     </insert>
+
+    <sql id="selectType">
+        select tb_source_id, tb_source_name, tb_source_description, tb_source_cover_image, tb_source_type, tb_source_size, tb_source_access_path, tb_source_md5, tb_source_hot, a.tb_emp_id, tb_emp_name from
+    </sql>
+
+    <select id="selectSourcesByType" resultMap="sourceMap">
+        <include refid="selectType"></include>
+        tb_source a left join tb_emp b on a.tb_emp_id = b.tb_emp_id where tb_source_type not like 'image%' and
+        tb_source_type like concat('%', #{type}, '%')
+    </select>
+
+    <select id="searchSourceById" resultMap="sourceMap">
+        select * from tb_source where tb_source_id = #{id}
+    </select>
+
+    <select id="searchSourceByCourseId" resultMap="sourceMap">
+        SELECT source.* FROM tb_source source, tb_course_source cs WHERE source.tb_source_id = cs.tb_source_id
+    </select>
 </mapper>

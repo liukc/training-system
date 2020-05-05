@@ -6,13 +6,14 @@
     <resultMap id="employeeResultMap" type="com.dgut.liukc.trainingsystem.javaBean.Employee">
         <id property="id" column="tb_emp_id"/>
         <result property="name" column="tb_emp_name"/>
-        <result property="department" column="tb_emp_dept" />
+        <result property="department" column="tb_emp_dept"/>
         <result property="headIcon" column="tb_emp_headicon"/>
         <result property="type" column="tb_emp_type"/>
-        <result property="beginDate" column="tb_emp_begin_date" />
-        <result property="endDate" column="tb_emp_end_date" />
+        <result property="beginDate" column="tb_emp_begin_date"/>
+        <result property="endDate" column="tb_emp_end_date"/>
         <result property="description" column="tb_emp_description"/>
         <result property="teacherId" column="tb_emp_teacher"/>
+        <result property="classId" column="tb_emp_class_id"/>
     </resultMap>
 
     <select id="getTeacherNameById" resultType="String">

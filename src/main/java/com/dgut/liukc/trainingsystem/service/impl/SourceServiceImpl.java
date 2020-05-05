@@ -13,6 +13,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class SourceServiceImpl implements SourceService {
@@ -23,7 +25,7 @@ public class SourceServiceImpl implements SourceService {
     private SourceDao sourceDao;
 
     @Override
-    public Source sourceUpload(MultipartFile file, String desc, Integer empId) {
+    public Source sourceUpload(MultipartFile file, String desc, Integer empId, int isPrivate) {
         Source source = null;
         String md5;
         String path;
@@ -46,6 +48,7 @@ public class SourceServiceImpl implements SourceService {
                 source.setMd5(md5);
                 source.setSize(file.getSize());
                 source.setType(file.getContentType());
+                source.setIsPrivate(isPrivate);
                 source.setEmpId(empId);
                 String accessPath = PropertiesOP.getConfigValueByKey("access.path");
                 String[] paths = path.split("/");
@@ -53,7 +56,33 @@ public class SourceServiceImpl implements SourceService {
                 source.setAccessPath(accessPath);
                 sourceDao.insertSource(source);
             }
+        }else {
+            source = sourceDao.searchSourceById(res);
+            source.setIsPrivate(isPrivate);
         }
         return source;
+    }
+
+    @Override
+    public List<Source> selectSources(String type) {
+        if ("all".equals(type)){
+            type="";
+        }
+
+        return sourceDao.selectSourcesByType(type);
+    }
+
+    @Override
+    public List<Source> sourcesUpload(MultipartFile[] files, Integer empId, int isPrivate) {
+        List<Source> sources = new ArrayList<>();
+        for (MultipartFile file: files){
+            sources.add(sourceUpload(file,null,empId,1));
+        }
+        return sources;
+    }
+
+    @Override
+    public Source searchSourceById(int id) {
+        return sourceDao.searchSourceById(id);
     }
 }

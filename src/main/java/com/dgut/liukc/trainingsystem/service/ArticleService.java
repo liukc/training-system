@@ -10,18 +10,22 @@ import java.util.List;
 
 public interface ArticleService {
 
-    public EmpJournal editPersonalLog(EmpJournal empJournal);
+    EmpJournal editPersonalLog(EmpJournal empJournal);
 
-    public List changeTrainingPeriod(int empId, String beginDate, String endDate);
+    List changeTrainingPeriod(int empId, String beginDate, String endDate);
 
-    public List initEmpLogs(int empId, Date beginDate, Date endDate);
+    List initEmpLogs(int empId, Date beginDate, Date endDate);
 
-    public List getLogs(int empId);
+    List getLogs(int empId);
 
-    public EmpJournal selectLogById(int id);
+    List getEditedLogs(int empId);
 
-    public default int isLegalBeginDate(String beginDate){
+    EmpJournal selectLogById(int id);
+
+    default int isLegalBeginDate(String beginDate) {
         return 0;
     }
+
+    int insertLogComment(EmpJournal empJournal);
 
 }

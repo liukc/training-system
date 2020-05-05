@@ -37,13 +37,11 @@ public class RegisterServiceImpl implements AuthenticationService {
                 status = 5000;
                 return status;
             }
-
             int id = generateDefaultUser(type);
             if (id != 0) {
                 empLoginInfo.setEmail(email);
                 empLoginInfo.setEmpId(id);
                 empLoginInfo.setPassword(newPassword);
-
                 int result = authenticationDao.insertEmpLoginInfo(empLoginInfo);
                 if (result == 0) {
                     logger.error("登录数据插入失败...");

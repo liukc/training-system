@@ -4,18 +4,16 @@ import lombok.Data;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
-@Data
 @Component
-public class Employee {
+@Data
+public class Class {
     private Integer id;
     private String name;
-    private String department;
-    private String headIcon;
-    private String type;
-    private String description;
     private Date beginDate;
     private Date endDate;
-    private int teacherId;
-    private int classId;
+    private int number;
+    private Integer teacherId;
+    private List<Employee> employees;
 }

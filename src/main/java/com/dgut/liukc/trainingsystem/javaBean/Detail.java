@@ -21,4 +21,10 @@ public class Detail {
         message = "成功";
         map = new HashMap<Object, Object>();
     }
+
+    public void clear(){
+        status = 2000;
+        message = "成功";
+        map.clear();
+    }
 }

@@ -14,4 +14,8 @@ public interface SourceDao {
     void insertSource(@Param("source")Source source);
 
     List<Source> selectSourcesByType(@Param("type") String type);
+
+    Source searchSourceById(@Param("id")int id);
+
+    List<Source> searchSourceByCourseId(@Param("courseId") int id);
 }

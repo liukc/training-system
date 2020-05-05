@@ -131,6 +131,11 @@ public class LogServiceImpl implements ArticleService {
     }
 
     @Override
+    public List getEditedLogs(int empId) {
+        return articleDao.searchEditedLogsByEmpId(empId);
+    }
+
+    @Override
     public EmpJournal selectLogById(int id) {
         return articleDao.selectLogById(id);
     }
@@ -149,5 +154,10 @@ public class LogServiceImpl implements ArticleService {
             return -1;
         }
         return 1;
+    }
+
+    @Override
+    public int insertLogComment(EmpJournal empJournal) {
+        return articleDao.insertLogComment(empJournal);
     }
 }

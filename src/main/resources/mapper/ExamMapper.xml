@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dgut.liukc.trainingsystem.dao.ExamDao">
+    <resultMap id="examMapper" type="com.dgut.liukc.trainingsystem.javaBean.Exam">
+        <id property="id" column="tb_exam_id"/>
+        <result property="name" column="tb_exam_name"/>
+        <result property="score" column="tb_exam_score"/>
+        <result property="questionNumber" column="tb_exam_question_number"/>
+        <collection property="questions" ofType="com.dgut.liukc.trainingsystem.javaBean.Question">
+            <id property="id" column="tb_question_id"/>
+            <result property="type" column="tb_question_type"/>
+            <result property="description" column="tb_question_desciption"/>
+            <result property="score" column="tb_question_score"/>
+            <result property="order" column="tb_question_order"/>
+            <collection property="options" ofType="com.dgut.liukc.trainingsystem.javaBean.Option">
+                <id property="id" column="tb_option_id"/>
+                <result property="order" column="tb_option_order"/>
+                <result property="description" column="tb_option_description"/>
+                <result property="isTrue" column="tb_option_is_true"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <resultMap id="quesMapper" type="com.dgut.liukc.trainingsystem.javaBean.Question">
+        <id property="id" column="tb_question_id"/>
+        <result property="type" column="tb_question_type"/>
+        <result property="description" column="tb_question_desciption"/>
+        <result property="score" column="tb_question_score"/>
+        <result property="order" column="tb_question_order"/>
+        <collection property="options" ofType="com.dgut.liukc.trainingsystem.javaBean.Option">
+            <id property="id" column="tb_option_id"/>
+            <result property="order" column="tb_option_order"/>
+            <result property="description" column="tb_option_description"/>
+            <result property="isTrue" column="tb_option_is_true"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="optionMapper" type="com.dgut.liukc.trainingsystem.javaBean.Option">
+        <id property="id" column="tb_option_id"/>
+        <result property="order" column="tb_option_order"/>
+        <result property="description" column="tb_option_description"/>
+        <result property="isTrue" column="tb_option_is_true"/>
+    </resultMap>
+
+    <sql id="baseExam">
+        tb_exam_name, tb_exam_score, tb_exam_question_number
+    </sql>
+    <sql id="baseQuestion">
+        tb_question_type, tb_question_desciption, tb_question_score, tb_question_order, tb_exam_id
+    </sql>
+    <sql id="baseOption">
+        tb_option_order, tb_option_description, tb_option_is_true, tb_question_id
+    </sql>
+
+    <insert id="insertExam" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_exam(<include refid="baseExam"></include>) values (#{exam.name}, #{exam.score},
+        #{exam.questionNumber})
+    </insert>
+
+    <insert id="insertQuestions" useGeneratedKeys="true" keyProperty="questions.id">
+        insert into tb_question(<include refid="baseQuestion"></include>) values
+        <foreach collection="questions" item="question" separator=",">
+            (#{question.type},#{question.description},#{question.score},#{question.order},#{examId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOptions" useGeneratedKeys="true" keyProperty="options.id">
+        insert into tb_option(<include refid="baseOption"></include>) values
+        <foreach collection="options" item="option" separator=",">
+            (#{option.order},#{option.description},#{option.isTrue},#{questionId})
+        </foreach>
+    </insert>
+
+    <select id="searchExamById" resultMap="examMapper">
+        select * from tb_exam WHERE tb_exam_id = #{id}
+    </select>
+    
+    <select id="searchQuestionsByExamId" resultMap="quesMapper">
+        select * from tb_question where tb_exam_id = #{examId} order by tb_question_type
+    </select>
+
+    <select id="searchOptionsByQuestionId" resultMap="optionMapper">
+        select tb_option_id, tb_option_order, tb_option_description, tb_option_is_true, tb_question_id from tb_option where tb_question_id = #{questionId}
+    </select>
+
+    <select id="searchOptionById" resultMap="optionMapper">
+        select * from tb_option where tb_option_id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dgut.liukc.trainingsystem.dao.CourseDao">
+    <insert id="insertCourse" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_course(tb_course_name, tb_exam_id) values (#{course.name}, #{course.exam.id})
+    </insert>
+
+    <insert id="insertCourseAndSource">
+        insert into tb_course_source (tb_course_id, tb_source_id) values
+        <foreach collection="course.sources" item="source" separator=",">
+            (#{course.id}, #{source.id})
+        </foreach>
+    </insert>
+
+    <insert id="insertCourseAndClass">
+        insert into tb_course_class (tb_course_id, tb_class_id) values
+        <foreach collection="course.classes" item="class" separator=",">
+            (#{course.id}, #{class.id})
+        </foreach>
+    </insert>
+    <resultMap id="baseCourse" type="com.dgut.liukc.trainingsystem.javaBean.Course">
+        <id property="id" column="tb_course_id"/>
+        <result property="name" column="tb_course_name"/>
+        <collection property="exam" ofType="com.dgut.liukc.trainingsystem.javaBean.Exam">
+            <id property="id" column="tb_exam_id"/>
+        </collection>
+    </resultMap>
+
+    <select id="searchCoursesByEmpId" resultMap="baseCourse">
+        SELECT course.* FROM(SELECT
+			tb_course_id
+		FROM
+			tb_course_class cc
+		LEFT JOIN tb_emp emp ON cc.tb_class_id = emp.tb_emp_class_id
+		WHERE
+			emp.tb_emp_id = #{empId})t1, tb_course course
+WHERE t1.tb_course_id = course.tb_course_id
+    </select>
+
+    <select id="searchCourseByExamId" resultMap="baseCourse">
+        select * from tb_course where tb_exam_id = #{examId}
+    </select>
+
+
+</mapper>

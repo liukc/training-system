@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dgut.liukc.trainingsystem.dao.ClassDao">
+    <resultMap id="classMap" type="com.dgut.liukc.trainingsystem.javaBean.Class">
+        <id property="id" column="tb_class_id"/>
+        <result property="name" column="tb_class_name"/>
+        <result property="beginDate" column="tb_class_begin_date"/>
+        <result property="endDate" column="tb_class_end_date"/>
+        <result property="number" column="tb_class_number"/>
+        <result property="teacherId" column="tb_class_teacher_id"/>
+        <collection property="employees" ofType="com.dgut.liukc.trainingsystem.javaBean.Employee">
+            <id property="id" column="tb_emp_id"/>
+            <result property="name" column="tb_emp_name"/>
+            <result property="department" column="tb_emp_dept"/>
+            <result property="headIcon" column="tb_emp_headicon"/>
+            <result property="type" column="tb_emp_type"/>
+            <result property="beginDate" column="tb_emp_begin_date"/>
+            <result property="endDate" column="tb_emp_end_date"/>
+            <result property="description" column="tb_emp_description"/>
+            <result property="teacherId" column="tb_emp_teacher"/>
+            <result property="classId" column="tb_emp_class_id"/>
+        </collection>
+    </resultMap>
+
+
+    <sql id="baseColumns">
+        tb_class_id, tb_class_name, tb_class_begin_date, tb_class_end_date, tb_class_number, tb_class_teacher_id,
+                tb_emp_id, tb_emp_name, tb_emp_dept,tb_emp_begin_date,tb_emp_end_date,tb_emp_teacher,tb_emp_class_id
+    </sql>
+
+    <select id="searchClassByTeacherId" resultMap="classMap">
+        select <include refid="baseColumns"></include> FROM tb_class tc, tb_emp te WHERE tc.tb_class_teacher_id =
+        #{teacherId} and tc.tb_class_id = te.tb_emp_class_id
+    </select>
+
+    <select id="searchOngoingClassesByTeacherId" resultMap="classMap">
+        select tb_class_id, tb_class_name FROM tb_class where tb_class_teacher_id = #{teacherId} and tb_class_end_date &gt; CURDATE()
+    </select>
+</mapper>

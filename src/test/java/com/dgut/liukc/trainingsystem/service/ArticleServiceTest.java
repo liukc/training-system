@@ -28,4 +28,9 @@ public class ArticleServiceTest {
         calendar.add(Calendar.DATE, 14);
         Date date1 = calendar.getTime();
     }
+
+    @Test
+    public void testGetEditedLogs(){
+        System.out.println(articleService.getEditedLogs(7));
+    }
 }

@@ -1,11 +1,15 @@
 package com.dgut.liukc.trainingsystem.controller;
 
 import com.dgut.liukc.trainingsystem.javaBean.Detail;
+import com.dgut.liukc.trainingsystem.javaBean.Employee;
+import com.dgut.liukc.trainingsystem.service.ArticleService;
 import com.dgut.liukc.trainingsystem.service.EmployeeService;
 import com.dgut.liukc.trainingsystem.utils.PropertiesOP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -22,6 +26,7 @@ public class TeacherController {
 
     @GetMapping("/getTeacherName")
     public Detail getTeacherNameById(@RequestParam("teacherId") Integer id, @RequestHeader("token") String token) {
+        detail.clear();
         Integer empId = (Integer) redisTemplate.opsForValue().get(token);
         if (empId == null) {
             detail.setStatus(4008);

@@ -2,9 +2,7 @@ package com.dgut.liukc.trainingsystem.controller;
 
 import com.dgut.liukc.trainingsystem.javaBean.Detail;
 import com.dgut.liukc.trainingsystem.javaBean.EmpJournal;
-import com.dgut.liukc.trainingsystem.javaBean.Source;
 import com.dgut.liukc.trainingsystem.service.ArticleService;
-import com.dgut.liukc.trainingsystem.utils.AuthenticationTool;
 import com.dgut.liukc.trainingsystem.utils.PropertiesOP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,7 +30,7 @@ public class LogController {
 
     @GetMapping("/getPersonalJournalDate")
     public Detail initPersonalJournal(@RequestHeader("token") String token){
-        clearDetail();
+        detail.clear();
         Integer id = (Integer) redisTemplate.opsForValue().get(token);
         if (id != null) {
             detail.getMap().put("logs", articleService.getLogs(id));
@@ -45,7 +43,7 @@ public class LogController {
 
     @GetMapping("/getLog")
     public Detail selectLogById(@RequestParam("id") Integer id, @RequestHeader("token") String token){
-        clearDetail();
+        detail.clear();
         Integer empId = (Integer) redisTemplate.opsForValue().get(token);
         if (empId != null) {
             detail.getMap().put("log",articleService.selectLogById(id));
@@ -55,10 +53,23 @@ public class LogController {
         return detail;
     }
 
+    @GetMapping("/searchEmpLogs")
+    public Detail searchEmpLogsById(@RequestParam("empId") Integer empId, @RequestHeader("token") String token) {
+        detail.clear();
+        Integer id = (Integer) redisTemplate.opsForValue().get(token);
+        if (id == null) {
+            detail.setStatus(4008);
+        } else {
+            detail.setStatus(2000);
+            detail.getMap().put("logs", articleService.getEditedLogs(empId));
+        }
+        detail.setMessage(PropertiesOP.getMessageByStatus(detail.getStatus()));
+        return detail;
+    }
 
     @PostMapping("/editLog")
     public Detail insertPersonalLog(@RequestBody EmpJournal empJournal, @RequestHeader("token") String token) {
-        clearDetail();
+        detail.clear();
         Integer id = (Integer) redisTemplate.opsForValue().get(token);
         if (id != null) {
             empJournal.setEmpId(id);
@@ -71,7 +82,7 @@ public class LogController {
 
     @PutMapping("/changeTrainingPeriod")
     public Detail changeTrainPeriod(@RequestHeader("token") String token, @RequestParam("beginDate") String beginDate, @RequestParam("endDate") String endDate) {
-        clearDetail();
+        detail.clear();
         Integer id = (Integer) redisTemplate.opsForValue().get(token);
         int legalDate = articleService.isLegalBeginDate(beginDate);
         if (id != null && legalDate == 1) {
@@ -91,9 +102,19 @@ public class LogController {
         return detail;
     }
 
-    private void clearDetail(){
-        detail.setStatus(2000);
+    @PostMapping("/addLogComment")
+    public Detail insertLogComment(@RequestBody EmpJournal empJournal, @RequestHeader("token") String token){
+        detail.clear();
+        Integer id = (Integer) redisTemplate.opsForValue().get(token);
+        if (id != null) {
+            if (articleService.insertLogComment(empJournal) != 1){
+                detail.setStatus(5000);
+            }
+        } else {
+            detail.setStatus(4008);
+        }
         detail.setMessage(PropertiesOP.getMessageByStatus(detail.getStatus()));
-        detail.getMap().clear();
+        return detail;
     }
+
 }

@@ -15,6 +15,10 @@
         <result property="empId" column="tb_emp_id"/>
     </resultMap>
 
+    <sql id="baseLog">
+        tb_emp_journal_id,tb_emp_journal_create_time,tb_emp_journal_week, tb_emp_journal_content, tb_emp_journal_feedback, tb_emp_journal_comment, tb_emp_journal_is_edit, tb_emp_id
+    </sql>
+
     <select id="isLogExist" resultType="integer">
         select tb_emp_journal.tb_emp_journal_id from tb_emp_journal where tb_emp_journal_id = #{id}
     </select>
@@ -38,7 +42,16 @@
     </insert>
 
     <select id="selectLogsByEmpId" resultMap="articleMap">
-        select tb_emp_journal_id, tb_emp_journal_create_time, tb_emp_journal_week,tb_emp_journal_is_edit from tb_emp_journal where tb_emp_id = #{empId} order by tb_emp_journal_create_time desc
+        select
+        <include refid="baseLog"></include>
+        from tb_emp_journal where tb_emp_id = #{empId} order by tb_emp_journal_create_time desc
+    </select>
+
+    <select id="searchEditedLogsByEmpId" resultMap="articleMap">
+        select
+        <include refid="baseLog"></include>
+        from tb_emp_journal where tb_emp_id = #{empId} and tb_emp_journal_is_edit = 1 order by
+        tb_emp_journal_create_time desc
     </select>
 
     <select id="selectLogById" resultMap="articleMap">
@@ -52,9 +65,13 @@
                 tb_emp_journal_create_time &gt; #{endDate}
             </if>
             <if test="beginDate != null">
-               and tb_emp_journal_create_time &lt; #{beginDate}
+                and tb_emp_journal_create_time &lt; #{beginDate}
             </if>
             and tb_emp_id = #{empId}
         </where>
     </delete>
+
+    <update id="insertLogComment" parameterType="com.dgut.liukc.trainingsystem.javaBean.EmpJournal">
+        update tb_emp_journal set tb_emp_journal_comment = #{log.comment} where tb_emp_journal_id = #{log.id}
+    </update>
 </mapper>
