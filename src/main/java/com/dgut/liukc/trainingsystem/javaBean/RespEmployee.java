@@ -5,17 +5,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-@Data
 @Component
-public class Employee {
+@Data
+public class RespEmployee {
     private Integer id;
     private String name;
+    private String email;
+    private String password;
     private String department;
-    private String headIcon;
     private String type;
-    private String description;
-    private Date beginDate;
-    private Date endDate;
-    private Integer teacherId;
-    private Integer classId;
+    private Class aClass;
 }

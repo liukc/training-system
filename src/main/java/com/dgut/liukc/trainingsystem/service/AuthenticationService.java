@@ -13,7 +13,7 @@ public interface AuthenticationService {
     Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
     default int register(String email, String password, String type) {
-        return 200;
+        return 2000;
     }
 
     default int checkLoginInfo(String account, String password) {

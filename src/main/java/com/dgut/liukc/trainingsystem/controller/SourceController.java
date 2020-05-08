@@ -76,7 +76,7 @@ public class SourceController {
     @PostMapping("/getSourceById")
     public Detail searchSourceById(@RequestBody Map map, @RequestHeader("token") String token){
         detail.clear();
-        Integer empId = (Integer) redisTemplate.opsForValue().get(token);
+        Object empId = redisTemplate.opsForValue().get(token);
         if (empId == null) {
             detail.setStatus(4008);
         } else {
@@ -84,6 +84,23 @@ public class SourceController {
             detail.getMap().put("source", source);
         }
         detail.setMessage(PropertiesOP.getMessageByStatus(detail.getStatus()));
+        return detail;
+    }
+
+    @GetMapping("/getSourcesByHot")
+    public Detail searchSourcesByHot(@RequestParam("type")String type){
+        detail.clear();
+        detail.getMap().put("sources", sourceService.searchSourcesByHot(type));
+        return detail;
+    }
+
+    @PostMapping("/deleteSource")
+    public Detail deleteSource(@RequestBody Map map, @RequestHeader("token") String token){
+        detail.clear();
+        String type = (String) redisTemplate.opsForValue().get(token);
+        if (type.equals("admin")) {
+            sourceService.deleteSourceById((Integer) map.get("id"));
+        }
         return detail;
     }
 }

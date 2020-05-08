@@ -103,4 +103,36 @@ public class LoginController {
         detail.setMessage(PropertiesOP.getMessageByStatus(detail.getStatus()));
         return detail;
     }
+
+    @PostMapping("/adminLogin")
+    public Detail adminLogin(@RequestParam("account") String account, @RequestParam("password") String password) {
+        detail.clear();
+        if (redisTemplate.opsForValue().get(account) != null) {
+            detail.setStatus(4007);
+            detail.setMessage(PropertiesOP.getMessageByStatus(detail.getStatus()));
+            return detail;
+        }
+        if ("admin@lkc.com".equals(account) && "admin".equals(password)){
+            // 验证成功，doSomething
+            String salt = UUIDGenerator.getUUID();
+            Employee employee = new Employee();
+            employee.setType("admin");
+            String token;
+            try {
+                token = MD5Encryption.generateTokenByUserInfo(employee, salt);
+            } catch (NoSuchAlgorithmException e) {
+                logger.error("MD5 算法加密失败...", e);
+                detail.setStatus(5000);
+                detail.setMessage(PropertiesOP.getMessageByStatus(5000));
+                return detail;
+            }
+            // 存储token4个小时
+            redisTemplate.opsForValue().set(token, employee.getType(), 4, TimeUnit.HOURS);
+            detail.getMap().put("token", token);
+        }else {
+            detail.setStatus(4002);
+            detail.setMessage("密码错误");
+        }
+        return detail;
+    }
 }

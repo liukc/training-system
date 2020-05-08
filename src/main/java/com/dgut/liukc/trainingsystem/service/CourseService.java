@@ -10,4 +10,8 @@ public interface CourseService {
     Course insertCourse(Map map);
 
     List<Course> searchCoursesByEmpId(int empId);
+
+    List<Course> searchCoursesByClassId(int classId);
+
+    void deleteCourseById(int courseId);
 }

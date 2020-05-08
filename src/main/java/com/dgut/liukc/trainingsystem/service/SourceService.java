@@ -14,4 +14,8 @@ public interface SourceService {
     List<Source> sourcesUpload(MultipartFile[] files, Integer empId, int isPrivate);
 
     Source searchSourceById(int id);
+
+    List<Source> searchSourcesByHot(String type);
+
+    void deleteSourceById(Integer id);
 }

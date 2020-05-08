@@ -19,5 +19,9 @@ public interface CourseDao {
 
     List<Course> searchCoursesByEmpId(@Param("empId") int empId);
 
+    List<Course> searchCoursesByClassId(@Param("classId") int classId);
+
     Course searchCourseByExamId(@Param("examId")int examId);
+
+    void deleteCourseById(@Param("id") int id);
 }

@@ -53,4 +53,31 @@ public class CourseController {
         detail.setMessage(PropertiesOP.getMessageByStatus(detail.getStatus()));
         return detail;
     }
+
+    @PostMapping("/getAllCourseByClass")
+    public Detail searchCourseByClass(@RequestHeader("token") String token, @RequestParam("classId")int classId){
+        detail.clear();
+        Integer id = (Integer) redisTemplate.opsForValue().get(token);
+        if (id != null) {
+            List courses = courseService.searchCoursesByClassId(classId);
+            detail.getMap().put("courses", courses);
+        } else {
+            detail.setStatus(4008);
+        }
+        detail.setMessage(PropertiesOP.getMessageByStatus(detail.getStatus()));
+        return detail;
+    }
+
+    @PostMapping("/deleteCourseById")
+    public Detail deleteCourseById(@RequestHeader("token") String token, @RequestBody Map map){
+        detail.clear();
+        Integer id = (Integer) redisTemplate.opsForValue().get(token);
+        if (id != null) {
+            courseService.deleteCourseById((Integer) map.get("courseId"));
+        } else {
+            detail.setStatus(4008);
+        }
+        detail.setMessage(PropertiesOP.getMessageByStatus(detail.getStatus()));
+        return detail;
+    }
 }

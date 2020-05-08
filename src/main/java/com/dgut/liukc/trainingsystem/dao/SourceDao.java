@@ -18,4 +18,10 @@ public interface SourceDao {
     Source searchSourceById(@Param("id")int id);
 
     List<Source> searchSourceByCourseId(@Param("courseId") int id);
+
+    void addHotById(@Param("id") int id, @Param("hot") int hot);
+
+    List<Source> searchSourcesByHot(@Param("type") String type);
+
+    void deleteSourceById(@Param("id")Integer id);
 }

@@ -36,7 +36,7 @@
     <select id="selectSourcesByType" resultMap="sourceMap">
         <include refid="selectType"></include>
         tb_source a left join tb_emp b on a.tb_emp_id = b.tb_emp_id where tb_source_type not like 'image%' and
-        tb_source_type like concat('%', #{type}, '%')
+        tb_source_type like concat('%', #{type}, '%') order by tb_source_id desc
     </select>
 
     <select id="searchSourceById" resultMap="sourceMap">
@@ -46,4 +46,18 @@
     <select id="searchSourceByCourseId" resultMap="sourceMap">
         SELECT source.* FROM tb_source source, tb_course_source cs WHERE source.tb_source_id = cs.tb_source_id
     </select>
+
+    <update id="addHotById">
+        update tb_source set tb_source_hot = #{hot} where tb_source_id = #{id}
+    </update>
+
+    <select id="searchSourcesByHot" resultMap="sourceMap">
+        <include refid="selectType"></include>
+        tb_source a left join tb_emp b on a.tb_emp_id = b.tb_emp_id where tb_source_type not like 'image%' and
+        tb_source_type like concat('%', #{type}, '%') order by tb_source_hot desc limit 0, 10
+    </select>
+
+    <delete id="deleteSourceById">
+        delete from tb_source where tb_source_id = #{id}
+    </delete>
 </mapper>

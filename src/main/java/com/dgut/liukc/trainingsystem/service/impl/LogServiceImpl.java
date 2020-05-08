@@ -2,7 +2,7 @@ package com.dgut.liukc.trainingsystem.service.impl;
 
 import com.dgut.liukc.trainingsystem.dao.ArticleDao;
 import com.dgut.liukc.trainingsystem.dao.EmployeeDao;
-import com.dgut.liukc.trainingsystem.javaBean.EmpJournal;
+import com.dgut.liukc.trainingsystem.javaBean.*;
 import com.dgut.liukc.trainingsystem.service.ArticleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,11 +28,13 @@ public class LogServiceImpl implements ArticleService {
     @Autowired
     private EmployeeDao employeeDao;
 
+    private Article article;
+
     @Override
     public EmpJournal editPersonalLog(EmpJournal empJournal) {
         empJournal.setIsEdit(1);
         int result = articleDao.updateLog(empJournal);
-        if (result == 1){
+        if (result == 1) {
             return articleDao.selectLogById(empJournal.getId());
         }
         return null;
@@ -159,5 +161,101 @@ public class LogServiceImpl implements ArticleService {
     @Override
     public int insertLogComment(EmpJournal empJournal) {
         return articleDao.insertLogComment(empJournal);
+    }
+
+    @Override
+    public Article insertArticle(Map map) {
+        Set<Map.Entry<String, Object>> entrySet = map.entrySet();
+        article = new Article();
+        entrySet.forEach(entry -> {
+            switch (entry.getKey()) {
+                case "title":
+                    article.setTitle((String) entry.getValue());
+                    break;
+                case "label":
+                    if (entry.getValue() instanceof List) {
+                        ((List) entry.getValue()).forEach(label -> {
+                            Label newLabel;
+                            String labelName = (String) label;
+                            newLabel = articleDao.searchLabelIsExistByName(labelName);
+                            if (newLabel == null) {
+                                newLabel = new Label();
+                                newLabel.setName(labelName);
+                                articleDao.insertLabel(newLabel);
+                            }
+                            article.getLabels().add(newLabel);
+                        });
+                    }
+                    break;
+                case "type":
+                    ArticleType articleType;
+                    String articleTypeName = (String) entry.getValue();
+                    articleType = articleDao.searchArticleTypeIsExistByName(articleTypeName);
+                    if (articleType == null) {
+                        articleType = new ArticleType();
+                        articleType.setName(articleTypeName);
+                        articleDao.insertArticleType(articleType);
+                    }
+                    article.setArticleType(articleType);
+                    break;
+                case "content":
+                    article.setContent((String) entry.getValue());
+                    break;
+                case "coverImg":
+                    article.setCoverImg((String) entry.getValue());
+                    break;
+                case "empId":
+                    Employee employee = new Employee();
+                    employee.setId((Integer) entry.getValue());
+                    article.setEmployee(employee);
+                    break;
+                default:
+                    break;
+            }
+        });
+        article.setCreateTime(new Date());
+        if (article.getContent().length() > 100) {
+            article.setDescription(article.getContent().substring(0, 100).replaceAll("\\<.*?>", ""));
+        } else {
+            article.setDescription(article.getContent().replaceAll("\\<.*?>", ""));
+        }
+        article.setHot(0);
+        articleDao.insertArticle(article);
+        articleDao.insertLabelArticle(article);
+        article.setEmployee(employeeDao.searchEmployeeById(article.getEmployee().getId()));
+        return article;
+    }
+
+    @Override
+    public List<Article> searchArticlesByTypeId(int typeId) {
+        return articleDao.searchArticlesByTypeId(typeId);
+    }
+
+    @Override
+    public Article searchArticleById(int articleId) {
+        Article article = articleDao.searchArticleById(articleId);
+        article.setHot(article.getHot()+1);
+        articleDao.updateArticle(article);
+        return article;
+    }
+
+    @Override
+    public List<Article> searchArticlesByTitle(String word) {
+        return articleDao.searchArticlesByTitle(word);
+    }
+
+    @Override
+    public List<Article> searchArticlesByHot() {
+        return articleDao.searchArticlesByHot();
+    }
+
+    @Override
+    public List<Article> searchArticles() {
+        return articleDao.searchArticle();
+    }
+
+    @Override
+    public void deleteArticleById(Integer id) {
+        articleDao.deleteArticleById(id);
     }
 }

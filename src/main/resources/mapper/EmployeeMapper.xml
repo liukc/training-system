@@ -23,4 +23,36 @@
     <update id="updateTrainingPeriod">
         update tb_emp set tb_emp_begin_date = #{beginDate}, tb_emp_end_date = #{endDate} where tb_emp_id = #{id}
     </update>
+
+    <select id="searchEmployeeById" resultMap="employeeResultMap">
+        select * from tb_emp where tb_emp_id =  #{id}
+    </select>
+
+    <select id="searchAllEmployees" resultMap="employeeResultMap">
+        select * from tb_emp;
+    </select>
+
+    <delete id="deleteEmployeeById">
+        delete from tb_emp where tb_emp_id = #{id}
+    </delete>
+
+    <update id="updateEmployeeType">
+        update tb_emp set tb_emp_type = #{employee.type} where tb_emp_id = #{employee.id}
+    </update>
+
+    <update id="updateEmployeeName">
+        update tb_emp set tb_emp_name = #{name} where tb_emp_id = #{id}
+    </update>
+
+    <update id="updateEmployeeTeacher">
+        update tb_emp set tb_emp_teacher = #{teacherId} where tb_emp_class_id = #{classId}
+    </update>
+
+    <select id="searchEmployeeByEmail" resultMap="employeeResultMap">
+        select e.* from tb_emp e left join tb_emp_login_info i on e.tb_emp_id = i.tb_emp_id where i.tb_emp_login_info_email = #{email}
+    </select>
+
+    <update id="updateEmployeeClass">
+        update tb_emp set tb_emp_teacher = #{employee.teacherId}, tb_emp_class_id = #{employee.classId} where tb_emp_id = #{employee.id}
+    </update>
 </mapper>

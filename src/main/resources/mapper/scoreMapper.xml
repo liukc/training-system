@@ -22,4 +22,8 @@
     <insert id="insertScore" useGeneratedKeys="true" keyProperty="id">
         insert into tb_score(<include refid="baseSelect"></include>) values (#{score.rank}, #{score.number}, #{score.empId}, #{score.course.id})
     </insert>
+
+    <select id="searchScoresByEmpId" resultMap="baseScore">
+        SELECT s.*, c.tb_course_name from tb_score s LEFT JOIN tb_course c on s.tb_course_id = c.tb_course_id WHERE s.tb_emp_id = #{empId}
+    </select>
 </mapper>

@@ -7,12 +7,10 @@ import com.dgut.liukc.trainingsystem.service.ClassService;
 import com.dgut.liukc.trainingsystem.utils.PropertiesOP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -49,6 +47,36 @@ public class ClassController {
             detail.setStatus(4008);
         }
         detail.setMessage(PropertiesOP.getMessageByStatus(detail.getStatus()));
+        return detail;
+    }
+
+    @PostMapping("/addClass")
+    public Detail insertClass(@RequestBody Map map, @RequestHeader("token") String token){
+        detail.clear();
+        String type = (String) redisTemplate.opsForValue().get(token);
+        if (type.equals("admin")) {
+            detail.getMap().put("class",classService.insertClass(map));
+        }
+        return detail;
+    }
+
+    @GetMapping("/getAllOnGoingClasses")
+    public Detail searchAllOnGoingClasses(@RequestHeader("token") String token){
+        detail.clear();
+        String type = (String) redisTemplate.opsForValue().get(token);
+        if (type.equals("admin")) {
+            detail.getMap().put("classes",classService.searchOngoingClasses());
+        }
+        return detail;
+    }
+
+    @PostMapping("/allocClass")
+    public Detail updateEmployeeClass(@RequestBody Map map, @RequestHeader("token") String token){
+        detail.clear();
+        String type = (String) redisTemplate.opsForValue().get(token);
+        if (type.equals("admin")) {
+            detail.getMap().put("employee",classService.updateEmployeeClass(map));
+        }
         return detail;
     }
 }

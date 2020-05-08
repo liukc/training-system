@@ -83,6 +83,19 @@ public class SourceServiceImpl implements SourceService {
 
     @Override
     public Source searchSourceById(int id) {
-        return sourceDao.searchSourceById(id);
+        Source source = sourceDao.searchSourceById(id);
+        source.setHot(source.getHot()+1);
+        sourceDao.addHotById(id, source.getHot());
+        return source;
+    }
+
+    @Override
+    public List<Source> searchSourcesByHot(String type) {
+        return sourceDao.searchSourcesByHot(type);
+    }
+
+    @Override
+    public void deleteSourceById(Integer id) {
+        sourceDao.deleteSourceById(id);
     }
 }

@@ -38,4 +38,20 @@
     <select id="searchOngoingClassesByTeacherId" resultMap="classMap">
         select tb_class_id, tb_class_name FROM tb_class where tb_class_teacher_id = #{teacherId} and tb_class_end_date &gt; CURDATE()
     </select>
+
+    <select id="searchOngoingClasses" resultMap="classMap">
+        select tb_class_id, tb_class_name FROM tb_class where tb_class_end_date &gt; CURDATE()
+    </select>
+
+    <select id="searchClassById" resultMap="classMap">
+        select tb_class_id, tb_class_name FROM tb_class where tb_class_id = #{id}
+    </select>
+
+    <insert id="insertClass" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_class(tb_class_name, tb_class_begin_date, tb_class_end_date) values (#{class.name},#{class.beginDate},#{class.endDate})
+    </insert>
+
+    <update id="updateClass">
+        update tb_class set tb_class_number = #{class.number}, tb_class_teacher_id = #{class.teacherId} where tb_class_id = #{class.id}
+    </update>
 </mapper>

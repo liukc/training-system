@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dgut.liukc.trainingsystem.dao.CommentDao">
+    <resultMap id="commentMap" type="com.dgut.liukc.trainingsystem.javaBean.Comment">
+        <id property="id" column="tb_comment_id"/>
+        <result property="content" column="tb_comment_content"/>
+        <result property="createTime" column="tb_comment_create_time"/>
+        <result property="floor" column="tb_comment_floor"/>
+        <result property="like" column="tb_comment_like"/>
+        <collection property="employee" ofType="com.dgut.liukc.trainingsystem.javaBean.Employee">
+            <id property="id" column="tb_emp_id"/>
+            <result property="name" column="tb_emp_name"/>
+            <result property="department" column="tb_emp_dept"/>
+            <result property="headIcon" column="tb_emp_headicon"/>
+            <result property="type" column="tb_emp_type"/>
+            <result property="beginDate" column="tb_emp_begin_date"/>
+            <result property="endDate" column="tb_emp_end_date"/>
+            <result property="description" column="tb_emp_description"/>
+            <result property="teacherId" column="tb_emp_teacher"/>
+            <result property="classId" column="tb_emp_class_id"/>
+        </collection>
+        <collection property="receiver" ofType="com.dgut.liukc.trainingsystem.javaBean.Employee">
+            <id property="id" column="receiver_id"/>
+            <result property="name" column="receiver_name"/>
+        </collection>
+        <collection property="article" ofType="com.dgut.liukc.trainingsystem.javaBean.Article">
+            <id property="id" column="tb_article_id"/>
+            <result property="title" column="tb_article_title"/>
+            <result property="content" column="tb_article_content"/>
+            <result property="description" column="tb_article_description"/>
+            <result property="createTime" column="tb_article_create_time"/>
+            <result property="coverImg" column="tb_article_cover_img"/>
+            <result property="hot" column="tb_article_hot"/>
+            <collection property="employee" ofType="com.dgut.liukc.trainingsystem.javaBean.Employee">
+                <id property="id" column="tb_emp_id"/>
+                <result property="name" column="tb_emp_name"/>
+                <result property="department" column="tb_emp_dept"/>
+                <result property="headIcon" column="tb_emp_headicon"/>
+                <result property="type" column="tb_emp_type"/>
+                <result property="beginDate" column="tb_emp_begin_date"/>
+                <result property="endDate" column="tb_emp_end_date"/>
+                <result property="description" column="tb_emp_description"/>
+                <result property="teacherId" column="tb_emp_teacher"/>
+                <result property="classId" column="tb_emp_class_id"/>
+            </collection>
+            <collection property="articleType" ofType="com.dgut.liukc.trainingsystem.javaBean.ArticleType">
+                <id property="id" column="tb_article_type_id"/>
+                <result property="name" column="tb_article_type_name"/>
+            </collection>
+            <collection property="labels" ofType="com.dgut.liukc.trainingsystem.javaBean.Label">
+                <id property="id" column="tb_label_id"/>
+                <result property="name" column="tb_label_name"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <sql id="baseComment">
+        tb_comment_content, tb_comment_create_time, tb_comment_floor, tb_comment_like, tb_emp_id, tb_comment_receiver, tb_article_id
+    </sql>
+
+    <select id="searchCommentsByArticleId" resultMap="commentMap">
+SELECT
+	c.*, e.tb_emp_name,
+	e.tb_emp_headicon,
+	r.tb_emp_id receiver_id,
+	r.tb_emp_name receiver_name
+FROM
+	tb_comment c
+LEFT JOIN tb_emp e ON c.tb_emp_id = e.tb_emp_id
+LEFT JOIN tb_emp r ON c.tb_comment_receiver = r.tb_emp_id
+WHERE
+	c.tb_article_id = #{articleId}
+    </select>
+
+    <insert id="insertComment" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_comment(<include refid="baseComment"></include>) values
+        (#{comment.content},#{comment.createTime},#{comment.floor},#{comment.like},#{comment.employee.id},
+        <if test="comment.receiver != null">
+            #{comment.receiver.id},
+        </if>
+        <if test="comment.receiver == null">
+            null,
+        </if>
+        #{comment.article.id})
+    </insert>
+
+    <resultMap id="messageMap" type="com.dgut.liukc.trainingsystem.javaBean.Message">
+        <id property="id" column="tb_message_id"/>
+        <result property="createTime" column="tb_message_create_time"/>
+        <result property="content" column="tb_message_centent"/>
+        <result property="isRead" column="tb_message_is_read"/>
+        <collection property="sender" ofType="com.dgut.liukc.trainingsystem.javaBean.Employee">
+            <id property="id" column="tb_emp_id"/>
+            <result property="name" column="tb_emp_name"/>
+            <result property="department" column="tb_emp_dept"/>
+            <result property="headIcon" column="tb_emp_headicon"/>
+            <result property="type" column="tb_emp_type"/>
+            <result property="beginDate" column="tb_emp_begin_date"/>
+            <result property="endDate" column="tb_emp_end_date"/>
+            <result property="description" column="tb_emp_description"/>
+            <result property="teacherId" column="tb_emp_teacher"/>
+            <result property="classId" column="tb_emp_class_id"/>
+        </collection>
+        <collection property="receiver" ofType="com.dgut.liukc.trainingsystem.javaBean.Employee">
+            <id property="id" column="receiver_id"/>
+            <result property="name" column="receiver_name"/>
+        </collection>
+        <collection property="comment" ofType="com.dgut.liukc.trainingsystem.javaBean.Comment">
+            <id property="id" column="tb_comment_id"/>
+            <collection property="employee" ofType="com.dgut.liukc.trainingsystem.javaBean.Employee">
+                <id property="id" column="tb_emp_id"/>
+            </collection>
+        </collection>
+    </resultMap>
+    <sql id="baseMessage">
+        tb_message_create_time, tb_message_centent, tb_message_sender, tb_message_receiver, tb_message_is_read, tb_comment_id
+    </sql>
+    <insert id="insertMessage" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_message(<include refid="baseMessage"></include>) values
+        (#{message.createTime},#{message.content},#{message.sender.id},#{message.receiver.id},#{message.isRead},#{message.comment.id})
+    </insert>
+
+    <select id="searchMessagesByEmpId" resultMap="messageMap">
+        SELECT
+	m.*, e.tb_emp_id, e.tb_emp_name, r.tb_emp_id receiver_id, r.tb_emp_name receiver_name
+FROM
+	tb_message m
+LEFT JOIN tb_emp e ON m.tb_message_sender = e.tb_emp_id
+LEFT JOIN tb_emp r ON m.tb_message_receiver = r.tb_emp_id
+WHERE
+	m.tb_message_receiver = #{receiveId} and m.tb_message_is_read = 0
+    </select>
+
+    <update id="readMessage">
+        update tb_message set tb_message_is_read = 1 where tb_message_id = #{id}
+    </update>
+</mapper>

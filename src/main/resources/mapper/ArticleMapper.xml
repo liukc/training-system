@@ -74,4 +74,126 @@
     <update id="insertLogComment" parameterType="com.dgut.liukc.trainingsystem.javaBean.EmpJournal">
         update tb_emp_journal set tb_emp_journal_comment = #{log.comment} where tb_emp_journal_id = #{log.id}
     </update>
+
+    <resultMap id="article" type="com.dgut.liukc.trainingsystem.javaBean.Article">
+        <id property="id" column="tb_article_id"/>
+        <result property="title" column="tb_article_title"/>
+        <result property="content" column="tb_article_content"/>
+        <result property="description" column="tb_article_description"/>
+        <result property="createTime" column="tb_article_create_time"/>
+        <result property="coverImg" column="tb_article_cover_img"/>
+        <result property="hot" column="tb_article_hot"/>
+        <collection property="employee" ofType="com.dgut.liukc.trainingsystem.javaBean.Employee">
+            <id property="id" column="tb_emp_id"/>
+            <result property="name" column="tb_emp_name"/>
+            <result property="department" column="tb_emp_dept"/>
+            <result property="headIcon" column="tb_emp_headicon"/>
+            <result property="type" column="tb_emp_type"/>
+            <result property="beginDate" column="tb_emp_begin_date"/>
+            <result property="endDate" column="tb_emp_end_date"/>
+            <result property="description" column="tb_emp_description"/>
+            <result property="teacherId" column="tb_emp_teacher"/>
+            <result property="classId" column="tb_emp_class_id"/>
+        </collection>
+        <collection property="articleType" ofType="com.dgut.liukc.trainingsystem.javaBean.ArticleType">
+            <id property="id" column="tb_article_type_id"/>
+            <result property="name" column="tb_article_type_name"/>
+        </collection>
+        <collection property="labels" ofType="com.dgut.liukc.trainingsystem.javaBean.Label">
+            <id property="id" column="tb_label_id"/>
+            <result property="name" column="tb_label_name"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="articleType" type="com.dgut.liukc.trainingsystem.javaBean.ArticleType">
+        <id property="id" column="tb_article_type_id"/>
+        <result property="name" column="tb_article_type_name"/>
+    </resultMap>
+    <resultMap id="label" type="com.dgut.liukc.trainingsystem.javaBean.Label">
+        <id property="id" column="tb_label_id"/>
+        <result property="name" column="tb_label_name"/>
+    </resultMap>
+    <sql id="baseArticle">
+        tb_article_title, tb_article_content, tb_article_description, tb_article_create_time, tb_article_cover_img, tb_article_hot,
+        tb_emp_id, tb_article_type_id
+    </sql>
+    <insert id="insertArticle" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_article(<include refid="baseArticle"></include>) values
+        (#{article.title},#{article.content},#{article.description},#{article.createTime},#{article.coverImg},#{article.hot},
+        #{article.employee.id},#{article.articleType.id})
+    </insert>
+
+    <select id="searchLabelIsExistByName" resultMap="label">
+        select * from tb_label where tb_label_name = #{name}
+    </select>
+
+    <insert id="insertLabel" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_label(tb_label_name) values (#{label.name})
+    </insert>
+
+    <select id="searchArticleTypeIsExistByName" resultMap="articleType">
+        select * from tb_article_type where tb_article_type_name = #{name}
+    </select>
+
+    <insert id="insertArticleType" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_article_type(tb_article_type_name) values (#{articleType.name})
+    </insert>
+
+    <insert id="insertLabelArticle">
+        insert into tb_label_article(tb_label_id, tb_article_id) values
+        <foreach collection="article.labels" item="label" separator=",">
+            (#{label.id}, #{article.id})
+        </foreach>
+    </insert>
+
+    <select id="searchEmpIdById" resultType="int">
+        select tb_emp_id from tb_article where tb_article_id = #{id}
+    </select>
+
+    <select id="searchArticlesByTypeId" resultMap="article">
+        select tb_article_id,tb_article_title, tb_article_description, tb_article_create_time, tb_article_cover_img, tb_article_hot,
+        tb_article_type_id, e.tb_emp_id, e.tb_emp_name  from tb_article a left join tb_emp e on a.tb_emp_id = e.tb_emp_id where tb_article_type_id = #{typeId}
+    </select>
+
+    <select id="searchArticle" resultMap="article">
+        select tb_article_id,tb_article_title, tb_article_create_time,
+        tb_article_type_id, e.tb_emp_id, e.tb_emp_name  from tb_article a left join tb_emp e on a.tb_emp_id = e.tb_emp_id
+    </select>
+
+    <select id="searchArticlesByHot" resultMap="article">
+        select tb_article_id,tb_article_title, tb_article_hot from tb_article order by tb_article_hot desc limit 0, 9
+    </select>
+
+    <select id="searchArticlesByTitle" resultMap="article">
+        select tb_article_id,tb_article_title, tb_article_description, tb_article_create_time, tb_article_cover_img, tb_article_hot,
+        tb_article_type_id, e.tb_emp_id, e.tb_emp_name  from tb_article a left join tb_emp e on a.tb_emp_id = e.tb_emp_id where tb_article_title like concat('%', #{word}, '%')
+    </select>
+
+    <select id="searchArticleById" resultMap="article">
+        select a.*, e.tb_emp_id, e.tb_emp_name from tb_article a left join tb_emp e on a.tb_emp_id = e.tb_emp_id 
+        where a.tb_article_id = #{id}
+    </select>
+
+    <update id="updateArticle">
+        update tb_article set tb_article_title = #{article.title},tb_article_content = #{article.content},
+        tb_article_description = #{article.description}, tb_article_create_time = #{article.createTime},
+        tb_article_cover_img = #{article.coverImg}, tb_article_hot = #{article.hot}
+        where tb_article_id = #{article.id}
+    </update>
+
+    <select id="searchArticleByCommentId" resultMap="article">
+SELECT
+	a.*, e.tb_emp_id,
+	e.tb_emp_name
+FROM
+	tb_article a
+LEFT JOIN tb_emp e ON a.tb_emp_id = e.tb_emp_id
+LEFT JOIN tb_comment c ON a.tb_article_id = c.tb_article_id
+WHERE
+	c.tb_comment_id = #{commentId}
+    </select>
+
+    <delete id="deleteArticleById">
+        delete from tb_article where tb_article_id = #{id}
+    </delete>
 </mapper>

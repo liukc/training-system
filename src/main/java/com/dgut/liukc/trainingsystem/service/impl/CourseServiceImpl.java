@@ -79,4 +79,21 @@ public class CourseServiceImpl implements CourseService {
         });
         return courses;
     }
+
+    @Override
+    public List<Course> searchCoursesByClassId(int classId) {
+        List<Course> courses = courseDao.searchCoursesByClassId(classId);
+        courses.forEach(course -> {
+            if (course.getExam().getId() != null){
+                course.setExam(examDao.searchExamById(course.getExam().getId()));
+            }
+            course.setSources(sourceDao.searchSourceByCourseId(course.getId()));
+        });
+        return courses;
+    }
+
+    @Override
+    public void deleteCourseById(int courseId) {
+        courseDao.deleteCourseById(courseId);
+    }
 }

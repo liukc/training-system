@@ -7,13 +7,13 @@
         select tb_emp_id from tb_emp_login_info where tb_emp_login_info_email = #{email}
     </select>
 
-    <insert id="insertEmployee" parameterType="com.dgut.liukc.trainingsystem.javaBean.Employee" keyProperty="id"
-            useGeneratedKeys="true">
+    <insert id="insertEmployee" parameterType="com.dgut.liukc.trainingsystem.javaBean.Employee" useGeneratedKeys="true" keyProperty="id"
+            >
         insert into tb_emp(tb_emp_id, tb_emp_name, tb_emp_headicon, tb_emp_description, tb_emp_type) values(#{employee.id}, #{employee.name}, #{employee.headIcon}, #{employee.description}, #{employee.type})
     </insert>
 
-    <insert id="insertEmpLoginInfo" parameterType="com.dgut.liukc.trainingsystem.javaBean.EmpLoginInfo" keyProperty="id"
-            useGeneratedKeys="true">
+    <insert id="insertEmpLoginInfo" parameterType="com.dgut.liukc.trainingsystem.javaBean.EmpLoginInfo"
+            useGeneratedKeys="true" keyProperty="id">
         insert into tb_emp_login_info(tb_emp_login_info_email, tb_emp_login_info_password, tb_emp_id)
                 values (#{empLoginInfo.email}, #{empLoginInfo.password}, #{empLoginInfo.empId})
     </insert>

@@ -39,9 +39,16 @@
 WHERE t1.tb_course_id = course.tb_course_id
     </select>
 
+    <select id="searchCoursesByClassId" resultMap="baseCourse">
+SELECT c.* FROM tb_course c left join tb_course_class cc ON c.tb_course_id = cc.tb_course_id WHERE cc.tb_class_id = #{classId}
+    </select>
+
     <select id="searchCourseByExamId" resultMap="baseCourse">
         select * from tb_course where tb_exam_id = #{examId}
     </select>
 
+    <delete id="deleteCourseById">
+        delete from tb_course where tb_course_id = #{id}
+    </delete>
 
 </mapper>

@@ -11,4 +11,12 @@ public interface ClassDao {
     List<Class> searchClassByTeacherId(@Param("teacherId") int id);
 
     List<Class> searchOngoingClassesByTeacherId(@Param("teacherId") int id);
+
+    Class searchClassById(@Param("id") int classId);
+
+    void insertClass(@Param("class") Class newClass);
+
+    List<Class> searchOngoingClasses();
+
+    void updateClass(@Param("class") Class aclass);
 }
